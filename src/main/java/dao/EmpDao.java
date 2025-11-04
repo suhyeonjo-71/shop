@@ -78,7 +78,70 @@ public class EmpDao {
 			empList.add(e);
 		}
 		
+		rs.close();
+	    stmt.close();
+	    conn.close();
+	    
 		return empList;
+	}
+	
+	public int selectEmpCount() throws Exception {
+	    int count = 0;
+	    Connection conn = null;
+	    PreparedStatement stmt = null;
+	    ResultSet rs = null;
+	    
+	    String sql = "SELECT COUNT(*) FROM emp";
+	    
+	    Class.forName("oracle.jdbc.OracleDriver");
+		conn = DBConnection.getConn();
+	    stmt = conn.prepareStatement(sql);
+	    rs = stmt.executeQuery();
+	    if(rs.next()) {
+	        count = rs.getInt(1);
+	    }
+	    
+	    conn.close();
+	    return count;
+	}
+	
+	//사원추가
+	public int insertEmp(Emp e) throws Exception {
+		Connection conn = null;
+	    PreparedStatement stmt = null;
+	    
+	    String sql = """
+	    		insert into emp(emp_code, emp_id, emp_pw, emp_name, active, createdate)
+	    			values(seq_emp.nextval, ?, ?, ?, ?, sysdate)
+	    		""";
+	    Class.forName("oracle.jdbc.OracleDriver");
+		conn = DBConnection.getConn();
+	    stmt = conn.prepareStatement(sql);
+	    stmt.setString(1, e.getEmpId());
+	    stmt.setString(2, e.getEmpPw());
+	    stmt.setString(3, e.getEmpName());
+	    stmt.setInt(4, e.getActive());
+	    int row = stmt.executeUpdate();
+	    
+		return row;
+	}
+	
+	//활성화 수정
+	public int updateEmpActive(Emp e) throws Exception {
+		Connection conn = null;
+	    PreparedStatement stmt = null;
+	    
+	    String sql = """
+	    		update emp set active=? where emp_code=?
+	    	""";
+	    Class.forName("oracle.jdbc.OracleDriver");
+		conn = DBConnection.getConn();
+	    stmt = conn.prepareStatement(sql);
+	    stmt.setInt(1, e.getActive());
+	    stmt.setInt(2, e.getEmpCode());
+	    int row = stmt.executeUpdate();
+	    
+	    return row;
 	}
 	
 }

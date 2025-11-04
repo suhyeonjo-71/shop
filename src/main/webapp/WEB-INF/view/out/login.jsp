@@ -9,8 +9,7 @@
 <style>
 /* 기본 초기화 및 body 스타일 */
 body {
-    font-family: 'Malgun Gothic', 'Dotum', sans-serif; /* 한국어 폰트 추가 */
-    background-color: #f4f4f9;
+    background-color: #f8f9fa;
     display: flex;
     justify-content: center; /* 가로 중앙 정렬 */
     align-items: center;   /* 세로 중앙 정렬 */
@@ -41,14 +40,6 @@ table {
     width: 100%;
     margin-bottom: 20px;
     border-collapse: collapse;
-}
-
-table tr {
-    border-bottom: 1px solid #eee; /* 줄 간 구분선 */
-}
-
-table tr:last-child {
-    border-bottom: none;
 }
 
 table td {
@@ -132,11 +123,6 @@ a[href]:hover {
 	<form action="${pageContext.request.contextPath}/out/login" method="post" id="loginForm">
 		<div>
 			<h1>login</h1>
-			<c:if test="${not empty errorMsg}">
-			    <div style="color:red; text-align:center; margin-bottom:10px;">
-			        ${errorMsg}
-			    </div>
-			</c:if>
 			<div>
 				<table>
 					<tr>
@@ -153,10 +139,17 @@ a[href]:hover {
 			<div>
 				<input type="radio" name="customerOrEmpSel" class="customerOrEmpSel" value="customer" checked>customer
 				<input type="radio" name="customerOrEmpSel" class="customerOrEmpSel" value="emp">emp
+				<a href="${pageContext.request.contextPath}/out/addMember">회원가입</a>
 			</div>
-			<a href="${pageContext.request.contextPath}/out/addMember">회원가입</a>
+			
 		</div>
 	</form>
+	
+	<c:if test="${not empty errorMsg}">
+        <script>
+            alert("${errorMsg}");
+        </script>
+    </c:if>
 </body>
 
 <script>

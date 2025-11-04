@@ -25,10 +25,10 @@ public class CustomerFilter extends HttpFilter implements Filter {
     	HttpServletResponse res = (HttpServletResponse) response;
     	HttpSession session = req.getSession();
     	
-		if(session.getAttribute("loginCustomer") == null) {
-			res.sendRedirect(req.getContextPath()+"/out/login");
-			return;
-    	}
+//		if(session.getAttribute("loginCustomer") == null) {
+//			res.sendRedirect(req.getContextPath()+"/out/login");
+//			return;
+//    	}
 			
     	System.out.println(req.getRequestURI() + "<--------- CustomerFilter 선행필터 작동");
     	chain.doFilter(request, response);

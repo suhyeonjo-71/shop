@@ -1,4 +1,4 @@
-package dao;
+    package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,13 +9,14 @@ import dto.Customer;
 import dao.DBConnection;
 
 public class CustomerDao {
+	//고객 로그인
 	public Customer selectCustomerByLogin(Customer c) throws Exception {
 		Customer loginCustomer = null;
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
-		String sql = "select customer_code, customer_id, customer_pw"
+		String sql = "select customer_code, customer_id, customer_pw, customer_name, point"
 				+ " from customer"
 				+ " where customer_id=? and customer_pw=?";
 		
@@ -28,13 +29,17 @@ public class CustomerDao {
 		
 		while(rs.next()) {
 			loginCustomer = new Customer();
+			loginCustomer.setCustomerCode(rs.getInt("customer_code"));
 			loginCustomer.setCustomerId(rs.getString("customer_id"));
 			loginCustomer.setCustomerPw(rs.getString("customer_pw"));
+			loginCustomer.setCustomerName(rs.getString("customer_name"));
+			loginCustomer.setPoint(rs.getInt("point"));
 		}
 		return loginCustomer;
 		
 	}
 	
+	//회원가입
 	public int insertCustomer(Customer c) throws Exception {
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -56,5 +61,29 @@ public class CustomerDao {
 
 		return row;
 		
+	}
+	
+	//아이디 사용 가능 여부
+	//return : null -> 사용가능, 아니면 사용불가
+	public String selectCustomerIdCheck(String id) throws Exception {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		String sql = """
+				select t.id
+				from
+				(select customer_id from customer
+				union all
+				select emp_id from emp
+				union all
+				select id from outid)t
+				where t.id=?
+			""";
+		
+		Class.forName("oracle.jdbc.OracleDriver");
+		conn = DBConnection.getConn();
+		stmt = conn.prepareStatement(sql);
+		return null;
 	}
 }

@@ -22,11 +22,12 @@ public class EmpFilter extends HttpFilter implements Filter {
 		HttpServletRequest req = (HttpServletRequest)request;
 		HttpServletResponse res = (HttpServletResponse) response;
 		HttpSession session = req.getSession();
-		if(session.getAttribute("loginEmp") == null) {
-			res.sendRedirect(req.getContextPath()+"/out/login");
-			return;
-		}
 		
+//		if(session.getAttribute("loginEmp") == null) {
+//			res.sendRedirect(req.getContextPath()+"/out/login");
+//			return;
+//		}
+//		
 		System.out.println(req.getRequestURI() + "<--------- EmpFilter 선행필터 작동");
     	chain.doFilter(request, response);
     }	

@@ -24,12 +24,17 @@ public class EmpListController extends HttpServlet {
 		
 		int rowPerPage = 10;
 		int startRow = (currentPage - 1) * rowPerPage;
-		int lastPage = 0;
+		int lastPage = 0; int totalRow = 0;
 		
 		EmpDao empDao = new EmpDao();
 		List<Emp> empList = null;
 		try {
 			empList = empDao.selectEmpListByPage(startRow, rowPerPage);
+			totalRow = empDao.selectEmpCount();
+			lastPage = totalRow / rowPerPage;
+			if(totalRow % rowPerPage != 0) {
+				lastPage += 1;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

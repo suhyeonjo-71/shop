@@ -12,7 +12,7 @@ import dto.Customer;
 
 
 @WebServlet("/out/addMember")
-public class addMemberController extends HttpServlet {
+public class AddMemberController extends HttpServlet {
 	//폼
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//addMember.jsp
