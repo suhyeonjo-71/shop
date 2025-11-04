@@ -39,13 +39,19 @@ public class LoginController extends HttpServlet {
                 if (loginCustomer != null) session.setAttribute("loginCustomer", loginCustomer);
                 response.sendRedirect(request.getContextPath() + "/customer/customerIndex");
 
-            } else if (customerOrEmpSel.equals("emp")) {
+            } if (customerOrEmpSel.equals("emp")) {
                 Emp e = new Emp();
                 e.setEmpId(id);
                 e.setEmpPw(pw);
                 Emp loginEmp = new EmpDao().selectEmpByLogin(e);
-                if (loginEmp != null) session.setAttribute("loginEmp", loginEmp);
-                response.sendRedirect(request.getContextPath() + "/emp/empIndex");
+                
+                if (loginEmp != null) {
+                    session.setAttribute("loginEmp", loginEmp);
+                    response.sendRedirect(request.getContextPath() + "/emp/empIndex");
+                } else {
+                    request.setAttribute("errorMsg", "아이디 또는 비밀번호가 올바르지 않습니다.");
+                    request.getRequestDispatcher("/WEB-INF/view/out/login.jsp").forward(request, response);
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();

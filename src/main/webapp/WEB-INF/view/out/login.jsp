@@ -132,6 +132,11 @@ a[href]:hover {
 	<form action="${pageContext.request.contextPath}/out/login" method="post" id="loginForm">
 		<div>
 			<h1>login</h1>
+			<c:if test="${not empty errorMsg}">
+			    <div style="color:red; text-align:center; margin-bottom:10px;">
+			        ${errorMsg}
+			    </div>
+			</c:if>
 			<div>
 				<table>
 					<tr>

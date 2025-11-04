@@ -3,19 +3,23 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import dto.Emp;
 
 public class EmpDao {
+	//사원 로그인
 	public Emp selectEmpByLogin(Emp e) throws Exception {
 		Emp loginEmp = null;
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
-		String sql = "select emp_code, emp_id, emp_pw"
+		String sql = "select emp_code, emp_id, emp_pw, emp_name"
 				+ " from emp"
-				+ " where emp_id=? and emp_pw=?";
+				+ " where emp_id=? and emp_pw=? and active > 0";
 		
 		Class.forName("oracle.jdbc.OracleDriver");
 		conn = DBConnection.getConn();
@@ -26,11 +30,55 @@ public class EmpDao {
 		
 		while(rs.next()) {
 			loginEmp = new Emp();
+			loginEmp.setEmpCode(rs.getInt("emp_code"));
 			loginEmp.setEmpId(rs.getString("emp_id"));
 			loginEmp.setEmpPw(rs.getString("emp_pw"));
+			loginEmp.setEmpName(rs.getString("emp_name"));
+			loginEmp.setEmpName(rs.getString("emp_name"));
 		}
+		
+		rs.close();
+	    stmt.close();
+	    conn.close();
+	    
 		return loginEmp;
 		
+	}
+	
+	//사원 목록
+	public List<Emp> selectEmpListByPage(int startRow, int rowPerPage) throws Exception {
+		List<Emp> empList = null;
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		String sql = """
+					select emp_code empCode, emp_id empId, emp_name empName, active, createdate
+					from emp
+					order by emp_code
+					offset ? rows fetch next ? rows only
+			""";
+		//offset 10 rows fetch next 10 rows only : 10행다음부터 10개의행을 가져옴
+		
+		Class.forName("oracle.jdbc.OracleDriver");
+		conn = DBConnection.getConn();
+		stmt = conn.prepareStatement(sql);
+		stmt.setInt(1, startRow);
+		stmt.setInt(2, rowPerPage);
+		rs = stmt.executeQuery();
+		
+		empList = new ArrayList<>();
+		while(rs.next()) {
+			Emp e = new Emp();
+			e.setEmpCode(rs.getInt("empCode"));
+			e.setEmpId(rs.getString("empId"));
+			e.setEmpName(rs.getString("empName"));
+			e.setActive(rs.getInt("active"));
+			e.setCreatedate(rs.getString("createdate"));
+			empList.add(e);
+		}
+		
+		return empList;
 	}
 	
 }
