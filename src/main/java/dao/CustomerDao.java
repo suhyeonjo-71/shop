@@ -72,18 +72,30 @@ public class CustomerDao {
 		
 		String sql = """
 				select t.id
-				from
-				(select customer_id from customer
-				union all
-				select emp_id from emp
-				union all
-				select id from outid)t
-				where t.id=?
+				from(
+					select customer_id id from customer
+					union all
+					select emp_id id from emp
+					union all
+					select id from outid
+				) t
+				where t.id = ?
 			""";
 		
 		Class.forName("oracle.jdbc.OracleDriver");
 		conn = DBConnection.getConn();
 		stmt = conn.prepareStatement(sql);
-		return null;
+		stmt.setString(1, id);
+		rs = stmt.executeQuery();
+		
+		String resultId = null;
+		if(rs.next()) {
+			resultId = rs.getString("id");
+		}
+		
+		rs.close();
+	    stmt.close();
+	    conn.close();
+		return resultId;
 	}
 }

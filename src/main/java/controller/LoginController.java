@@ -29,60 +29,78 @@ public class LoginController extends HttpServlet {
         String customerOrEmpSel = request.getParameter("customerOrEmpSel"); // "customer" or "emp"
 
         HttpSession session = request.getSession();
+
+        request.setAttribute("id", id);
         
+        CustomerDao customerDao = new CustomerDao();
+        EmpDao empDao = new EmpDao();
+        
+        Customer customer = null;
+        Emp emp = null;
+
+        // 1. 고객/직원 계정 정보 조회 시도
         try {
-        	CustomerDao customerDao = new CustomerDao();
-			EmpDao empDao = new EmpDao();
-			
-        	Customer customer = null;
-			Emp emp = null;
+            Customer c = new Customer();
+            c.setCustomerId(id);
+            c.setCustomerPw(pw);
+            customer = customerDao.selectCustomerByLogin(c);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-			try {
-				Customer c = new Customer();
-				c.setCustomerId(id);
-				c.setCustomerPw(pw);
-				customer = customerDao.selectCustomerByLogin(c);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+        try {
+            Emp e = new Emp();
+            e.setEmpId(id);
+            e.setEmpPw(pw);
+            emp = empDao.selectEmpByLogin(e); 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-			try {
-				Emp e = new Emp();
-				e.setEmpId(id);
-				e.setEmpPw(pw);
-				emp = empDao.selectEmpByLogin(e);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+        String errorMsg = null;
+        boolean loginSuccess = false;
 
-			// 이제 조건 체크
-			if ("customer".equals(customerOrEmpSel)) {
-				if (customer != null && emp == null) {
-					session.setAttribute("loginCustomer", customer);
-					response.sendRedirect(request.getContextPath() + "/customer/customerIndex");
-				} else {
-					request.setAttribute("errorMsg", "고객 계정으로만 로그인할 수 있습니다.");
-					request.getRequestDispatcher("/WEB-INF/view/out/login.jsp").forward(request, response);
-				}
+        // 2. 로그인 실패 및 계정 유형 검사
+        
+        // (A) ID나 비밀번호가 틀린 경우 (어떤 계정으로도 로그인 실패)
+        if (customer == null && emp == null) {
+            errorMsg = "아이디나 비밀번호가 틀렸습니다."; 
+        } 
+        // (B) ID/PW는 맞으나 계정 유형 선택이 잘못된 경우
+        else {
+            if ("customer".equals(customerOrEmpSel)) {
+                if (customer != null && emp == null) {
+                    // 고객 계정으로 로그인 성공
+                    session.setAttribute("loginCustomer", customer);
+                    loginSuccess = true;
+                } else if (customer == null && emp != null) {
+                    // 직원 계정이 고객(customer)선택
+                    errorMsg = "고객 계정이 아닙니다."; 
+                }
 
-			} else if ("emp".equals(customerOrEmpSel)) {
-				if (emp != null && customer == null) {
-					session.setAttribute("loginEmp", emp);
-					response.sendRedirect(request.getContextPath() + "/emp/empIndex");
-				} else {
-					request.setAttribute("errorMsg", "직원 계정으로만 로그인할 수 있습니다.");
-					request.getRequestDispatcher("/WEB-INF/view/out/login.jsp").forward(request, response);
-				}
-
-			} else {
-				request.setAttribute("errorMsg", "로그인 유형을 선택하세요.");
-				request.getRequestDispatcher("/WEB-INF/view/out/login.jsp").forward(request, response);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			request.setAttribute("errorMsg", "로그인 처리 중 오류 발생");
-			request.getRequestDispatcher("/WEB-INF/view/out/login.jsp").forward(request, response);
-		}
-	}
+            } else if ("emp".equals(customerOrEmpSel)) {
+                if (emp != null && customer == null) {
+                    // 직원 계정으로 로그인 성공
+                    session.setAttribute("loginEmp", emp);
+                    loginSuccess = true;
+                } else if (emp == null && customer != null) {
+                    // 고객 계정이 직원(emp)선택
+                    errorMsg = "직원 계정이 아닙니다."; 
+                }
+            }
+        }
+        
+        // (C) 로그인 성공/실패에 따른 처리
+        if (loginSuccess) {
+            if ("customer".equals(customerOrEmpSel)) {
+                response.sendRedirect(request.getContextPath() + "/customer/customerIndex");
+            } else if ("emp".equals(customerOrEmpSel)) {
+                response.sendRedirect(request.getContextPath() + "/emp/empIndex");
+            }
+            return;
+        } 
+        
+        request.setAttribute("errorMsg", errorMsg); 
+        request.getRequestDispatcher("/WEB-INF/view/out/login.jsp").forward(request, response);
+    }
 }

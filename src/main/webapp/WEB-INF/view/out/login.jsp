@@ -123,6 +123,9 @@ a[href]:hover {
 	<form action="${pageContext.request.contextPath}/out/login" method="post" id="loginForm">
 		<div>
 			<h1>login</h1>
+			<p id="errorMsg" style="color: red; margin-bottom: 20px;">
+            	<c:out value="${errorMsg}"/>
+       		</p>
 			<div>
 				<table>
 					<tr>
@@ -134,43 +137,56 @@ a[href]:hover {
 						<td><input type="password" name="pw" id="pw"></td>
 					</tr>
 				</table>
-				<button type="button" id="loginBtn">로그인</button>
+				<button type="submit" id="loginBtn">로그인</button>
 			</div>
 			<div>
 				<input type="radio" name="customerOrEmpSel" class="customerOrEmpSel" value="customer" checked>customer
 				<input type="radio" name="customerOrEmpSel" class="customerOrEmpSel" value="emp">emp
 				<a href="${pageContext.request.contextPath}/out/addMember">회원가입</a>
 			</div>
-			
 		</div>
 	</form>
 	
-	<c:if test="${not empty errorMsg}">
-        <script>
-            alert("${errorMsg}");
-        </script>
-    </c:if>
 </body>
 
 <script>
-    $(document).ready(()=> {
-    	$('#loginBtn').click(()=> {
-    		let id = $('#id').val();
-    		let pw = $('#pw').val();
-    		
-    		if(id === '') {
-    			alert('아이디를 입력하세요');
-    			return;
-    		}
-    		
-    		if(pw === '') {
-    			alert('비밀번호를 입력하세요');                 
-    			return;
-    		}
-    		
-    		$('#loginForm').submit();
-    	});
+$(document).ready(function() {
+    // 버튼 type을 submit에서 button으로 변경하고 JS로 폼 제출을 제어
+    $('#loginBtn').click(function(e) {
+        // 서버 에러 메시지 초기화
+        $('#errorMsg').text('');
+
+        let id = $('#id').val();
+        let pw = $('#pw').val();
+
+        if(id === '' || pw === '') {
+            e.preventDefault(); // 폼 제출 방지
+            $('#errorMsg').text('아이디와 비밀번호를 모두 입력하세요.'); 
+            if(id === '') {
+                $('#id').focus();
+            } else {
+                $('#pw').focus();
+            }
+            return;
+        }
+        
+        // 클라이언트 유효성 검사 통과 시 폼 제출
+        $('#loginForm').submit();
     });
+    
+    // 엔터 키 입력 시 로그인 버튼 클릭 이벤트 트리거
+    $('input[type="text"], input[type="password"]').keypress(function(e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            $('#loginBtn').click();
+        }
+    });
+
+    // 서버 오류 메시지가 있을 경우 (페이지 로드 시) 포커스 이동
+    if ($('#errorMsg').text().trim() !== '') {
+        $('#id').focus();
+    }
+});
 </script>
 
 </html>   
