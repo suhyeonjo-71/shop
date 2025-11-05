@@ -5,7 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
-	static public Connection getConn() throws SQLException {
+	static public Connection getConn() throws Exception {
+		Class.forName("oracle.jdbc.OracleDriver");
 		return DriverManager.getConnection(
 				"jdbc:oracle:thin:@localhost:1521:xe"
 				, "gdj95"

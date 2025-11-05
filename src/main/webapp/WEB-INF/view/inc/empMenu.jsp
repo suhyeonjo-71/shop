@@ -4,4 +4,6 @@
 	<!-- 메인 메뉴 -->
 	<a href="${pageContext.request.contextPath}/emp/empList">[사원관리]</a>
 	<a href="${pageContext.request.contextPath}/customer/customerList">[고객관리]</a>
+	<a href="${pageContext.request.contextPath}/customer/outidList">[탈퇴ID관리]</a>
+	<a href="${pageContext.request.contextPath}/customer/goodsList">[상품관리]</a>
 </div>
