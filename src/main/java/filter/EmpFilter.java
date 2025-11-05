@@ -14,21 +14,16 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-@WebFilter("/emp/*")
+//@WebFilter("/emp/*")
 public class EmpFilter extends HttpFilter implements Filter {
 
-	@Override
     public  void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest req = (HttpServletRequest)request;
-		HttpServletResponse res = (HttpServletResponse) response;
-		HttpSession session = req.getSession();
-		
-//		if(session.getAttribute("loginEmp") == null) {
-//			res.sendRedirect(req.getContextPath()+"/out/login");
-//			return;
-//		}
-//		
-		System.out.println(req.getRequestURI() + "<--------- EmpFilter 선행필터 작동");
+		System.out.println("pre EmpFilter");
+		HttpSession session = ((HttpServletRequest)request).getSession();
+		if(session.getAttribute("loginEmp") == null) {
+			((HttpServletResponse)response).sendRedirect(((HttpServletRequest)request).getContextPath()+"/out/login");
+			return;
+		}
     	chain.doFilter(request, response);
     }	
 }	

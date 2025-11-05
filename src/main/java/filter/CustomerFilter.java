@@ -16,21 +16,20 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 
-@WebFilter("/customer/*")
+//@WebFilter("/customer/*")
 public class CustomerFilter extends HttpFilter implements Filter {
 	
 	@Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-    	HttpServletRequest req = (HttpServletRequest)request;
-    	HttpServletResponse res = (HttpServletResponse) response;
-    	HttpSession session = req.getSession();
-    	
-//		if(session.getAttribute("loginCustomer") == null) {
-//			res.sendRedirect(req.getContextPath()+"/out/login");
-//			return;
-//    	}
-			
-    	System.out.println(req.getRequestURI() + "<--------- CustomerFilter 선행필터 작동");
-    	chain.doFilter(request, response);
+		// 요청 전
+		System.out.println("pre CustomerFilter");
+		HttpSession session = ((HttpServletRequest)request).getSession();
+		if(session.getAttribute("loginCustomer") == null) {
+			((HttpServletResponse)response).sendRedirect(((HttpServletRequest)request).getContextPath()+"/out/login");
+			return;
+		} 
+				
+		chain.doFilter(request, response);
+
     }
 }
