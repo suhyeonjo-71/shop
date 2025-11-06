@@ -12,6 +12,7 @@ import dto.Emp;
 import dto.Goods;
 import dto.GoodsImg;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig; // Import 추가
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +20,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
 
-@WebServlet("/customer/addGoods")
+@WebServlet("/emp/addGoods")
+@MultipartConfig // Multipart 요청 처리를 위한 어노테이션 추가
 public class AddGoodsController extends HttpServlet {
 	private GoodsDao goodsDao;
 	
@@ -33,6 +35,14 @@ public class AddGoodsController extends HttpServlet {
 		String pointRate = request.getParameter("pointRate");
 		// 파일업로드는 Part 라이브러리 사용
 		Part part = request.getPart("goodsImg");
+		
+		// 파일 미첨부 시 처리 로직 추가 (NullPointerException 방지)
+		if (part == null || part.getSize() == 0) {
+			System.out.println("상품 이미지가 첨부되지 않았습니다.");
+			response.sendRedirect(request.getContextPath() + "/emp/addGoods");
+			return;
+		}
+		
 		String originName = part.getSubmittedFileName();
 		String filename = UUID.randomUUID().toString().replace("-", "");
 		// filename = filename + originName의 확장자

@@ -20,7 +20,7 @@ public class GoodsDao {
 		
 		String sql = """
 					select goods_code goodsCode, goods_name goodsName, goods_price goodsPrice,
-					       soldout, emp_code empCode, point_date pointRate, createdate
+					       soldout, emp_code empCode, point_rate pointRate, createdate
 					from goods
 					order by goods_code
 					offset ? rows fetch next ? rows only
@@ -32,7 +32,7 @@ public class GoodsDao {
 		stmt.setInt(2, rowPerPage);
 		rs = stmt.executeQuery();
 		
-		if(rs.next()) {
+		while(rs.next()) {
 			Goods g = new Goods();
 			g.setGoodsCode(rs.getInt("goodsCode"));
 			g.setGoodsName(rs.getString("goodsName"));

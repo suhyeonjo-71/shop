@@ -29,10 +29,19 @@ public class GoodsListController extends HttpServlet {
 		this.goodsDao = new GoodsDao();
 		List<Goods> goodsList = null;
 		try {
-			
+			goodsList = goodsDao.selectGoodsList(startRow, rowPerPage);
+			totalRow = goodsDao.selectGoodsCount();
+			lastPage = totalRow / rowPerPage;
+			if(totalRow % rowPerPage != 0) {
+				lastPage += 1;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		request.setAttribute("currentPage", currentPage);
+		request.setAttribute("lastPage", lastPage);
+		request.setAttribute("goodsList", goodsList);
 		request.getRequestDispatcher("/WEB-INF/view/emp/goodsList.jsp").forward(request, response);
 	}
 

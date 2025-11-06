@@ -137,7 +137,7 @@ h1 {
         
         <div class="cust-menu-area">
              <div class="inner-wrapper">
-                <p style="margin: 0; padding: 15px; color: #adb5bd;">[고객 메뉴 위치]</p> 
+                <c:import url="/WEB-INF/view/inc/customerMenu.jsp"></c:import>
              </div>
         </div>
     </div>
