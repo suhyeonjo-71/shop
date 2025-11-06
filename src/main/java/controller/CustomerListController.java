@@ -19,20 +19,29 @@ public class CustomerListController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//request
 		int currentPage = 1;
-		int startRow = 0;
+		if(request.getParameter("currentPage") != null) {
+			currentPage = Integer.parseInt(request.getParameter("currentPage"));
+		}
 		int rowPerPage = 10;
+		int startRow = (currentPage - 1) * rowPerPage;
+		int lastPage = 0; int totalRow = 0;
 		
-		//CustomerDao customerDao = new CustomerDao();
 		this.customerDao = new CustomerDao();
 		List<Customer> customerList = null;
 		try {
 			customerList = customerDao.selectCustomerList(startRow, rowPerPage);
+			totalRow = customerDao.selectCustomerCount();
+			lastPage = totalRow / rowPerPage;
+			if(totalRow % rowPerPage != 0) {
+				lastPage += 1;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
+		request.setAttribute("currentPage", currentPage);
+		request.setAttribute("lastPage", lastPage);
+		request.setAttribute("customerList", customerList);
 		request.getRequestDispatcher("/WEB-INF/view/customer/customerList.jsp").forward(request, response);
  	}
-
-
 }

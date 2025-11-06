@@ -15,6 +15,7 @@ import dto.Emp;
 
 @WebServlet("/emp/empList")
 public class EmpListController extends HttpServlet {
+	private EmpDao empDao;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int currentPage = 1;
@@ -26,7 +27,7 @@ public class EmpListController extends HttpServlet {
 		int startRow = (currentPage - 1) * rowPerPage;
 		int lastPage = 0; int totalRow = 0;
 		
-		EmpDao empDao = new EmpDao();
+		this.empDao = new EmpDao();
 		List<Emp> empList = null;
 		try {
 			empList = empDao.selectEmpListByPage(startRow, rowPerPage);

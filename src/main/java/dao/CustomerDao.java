@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import dto.Customer;
@@ -36,6 +37,10 @@ public class CustomerDao {
 			loginCustomer.setCustomerName(rs.getString("customer_name"));
 			loginCustomer.setPoint(rs.getInt("point"));
 		}
+		
+		rs.close();
+	    stmt.close();
+	    conn.close();
 		return loginCustomer;
 		
 	}
@@ -59,6 +64,8 @@ public class CustomerDao {
 		stmt.setInt(5, c.getPoint());
 		row = stmt.executeUpdate();
 
+	    stmt.close();
+	    conn.close();
 		return row;
 		
 	}
@@ -98,57 +105,102 @@ public class CustomerDao {
 		return resultId;
 	}
 	
-	//직원 로그인 시 전체 고객 리스트 확인
+	//emp 로그인 시 전체 고객 리스트 확인
 	public List<Customer> selectCustomerList(int startRow, int rowPerPage) throws Exception {
+		List<Customer> customerList = null;
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		
-		String sql = "select * from goods";
-		
+
+		String sql = """
+					select
+					customer_code customerCode, customer_id customerId, customer_name customerName,
+					customer_phone customerPhone, point, createdate
+					from customer
+					order by customer_code
+					offset ? rows fetch next ? rows only
+				""";
+
+		conn = DBConnection.getConn();
+		stmt = conn.prepareStatement(sql);
+		stmt.setInt(1, startRow);
+		stmt.setInt(2, rowPerPage);
+		rs = stmt.executeQuery();
+
+		customerList = new ArrayList<>();
+		while (rs.next()) {
+			Customer c = new Customer();
+			c.setCustomerCode(rs.getInt("customerCode"));
+			c.setCustomerId(rs.getString("customerId"));
+			c.setCustomerName(rs.getString("customerName"));
+			c.setCustomerPhone(rs.getString("customerPhone"));
+			c.setPoint(rs.getInt("point"));
+			c.setCreatedate(rs.getString("createdate"));
+			customerList.add(c);
+		}
+
+		rs.close();
+		stmt.close();
+		conn.close();
+		return customerList;
+	}
+
+	public int selectCustomerCount() throws Exception {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
+		String sql = "select count(*) from customer";
+
 		conn = DBConnection.getConn();
 		stmt = conn.prepareStatement(sql);
 		rs = stmt.executeQuery();
-		
-		while(rs.next()) {
-			
+		int count = 0;
+		if (rs.next()) {
+			count = rs.getInt(1);
 		}
-		return null;
+
+		rs.close();
+		stmt.close();
+		conn.close();
+		return count;
 	}
 	
 	//직원에 의해 강제 탈퇴
 	public void deleteCustomerByEmp(Outid oi) {
 		Connection conn = null;
-		PreparedStatement psmtCustomer= null;
+		PreparedStatement psmtCustomer = null;
 		PreparedStatement psmtOutId = null;
 		String sqlCustomer = """
-					delet from customer where customer_id=?
+					delete from customer where customer_id=?
 				""";
 		String sqlOutId = """
 					insert into outid(id, memo, createdate)
-					values(?,?,?)
+					values(?,?,sysdate)
 				""";
-		
-		//JDBC Connection의 기본 Commit설정값은 auto commit = true -> false 변경 후 transaction 적용
+
+		// JDBC Connection의 기본 Commit설정값은 auto commit = true -> false 변경 후 transaction
+		// 적용
 		try {
 			conn = DBConnection.getConn();
-			conn.setAutoCommit(false); //개발자가 commit, rollback 직접 구현 필요
+
+			conn.setAutoCommit(false); // 개발자가 commit, rollback 직접 구현 필요
 			psmtCustomer = conn.prepareStatement(sqlCustomer);
-			
-			// ? oi.getId()
-			
-			int row = psmtCustomer.executeUpdate(); //삭제
-			if(row == 1) {
+			psmtCustomer.setString(1, oi.getId());
+			int row = psmtCustomer.executeUpdate(); // 삭제
+
+			if (row == 1) {
 				psmtOutId = conn.prepareStatement(sqlOutId);
-				psmtOutId.executeUpdate(); //입력
-				
-				//?,?,? oi.getId(), oi.getMemo(), sysdate
-				
+				psmtOutId.setString(1, oi.getId());
+				psmtOutId.setString(2, oi.getMemo());
+				psmtOutId.executeUpdate(); // 입력
+
 			} else {
 				throw new SQLException();
 			}
-			
+
 			conn.commit();
+
 		} catch (Exception e) {
 			try {
 				conn.rollback();
@@ -157,7 +209,7 @@ public class CustomerDao {
 			}
 			e.printStackTrace();
 		} finally {
-			
+
 			try {
 				psmtOutId.close();
 				psmtCustomer.close();
@@ -165,6 +217,87 @@ public class CustomerDao {
 				e.printStackTrace();
 			}
 		}
-		
 	}
+	
+	//emp 로그인 시 탈퇴ID관리 list
+	public List<Outid> selectOutidList(String memo, int startRow, int rowPerPage) throws Exception {
+		List<Outid> outidList = new ArrayList<>();
+		Connection conn = DBConnection.getConn();
+		;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
+		if (memo != null && !memo.isEmpty()) {
+			String sql = """
+					    SELECT id, memo, createdate
+					    FROM outid
+					    WHERE memo = ?
+					    ORDER BY createdate DESC
+					    OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+					""";
+
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, memo);
+			stmt.setInt(2, startRow);
+			stmt.setInt(3, rowPerPage);
+
+		} else {
+			String sql = """
+					    SELECT id, memo, createdate
+					    FROM outid
+					    ORDER BY createdate DESC
+					    OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+					""";
+
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, startRow);
+			stmt.setInt(2, rowPerPage);
+		}
+		rs = stmt.executeQuery();
+
+		while (rs.next()) {
+			Outid o = new Outid();
+			o.setId(rs.getString("id"));
+			o.setMemo(rs.getString("memo"));
+			o.setCreatedate(rs.getString("createdate"));
+			outidList.add(o);
+		}
+
+		rs.close();
+		stmt.close();
+		conn.close();
+		return outidList;
+	}
+
+	public int selectOutidCount(String memo) throws Exception {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
+		String sql = "select count(*) from outid";
+		if (memo != null && !memo.isEmpty()) {
+			sql += " where memo = ?";
+		}
+
+		conn = DBConnection.getConn();
+		stmt = conn.prepareStatement(sql);
+
+		if (memo != null && !memo.isEmpty()) {
+			stmt.setString(1, memo);
+		}
+		rs = stmt.executeQuery();
+
+		int count = 0;
+		if (rs.next()) {
+			count = rs.getInt(1);
+		}
+
+		rs.close();
+		stmt.close();
+		conn.close();
+		return count;
+	}
+		
 }
+	
+
