@@ -29,7 +29,7 @@ public class OrdersListController extends HttpServlet {
 		}
 		request.setAttribute("list", list);
 		request.setAttribute("currentPage", currentPage);
-		request.getRequestDispatcher("/WEB-INF/view/emp/ordersList.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/view/emp/orderList.jsp").forward(request, response);
 		
 	}
 

@@ -30,7 +30,7 @@ body {
 /* 컨텐츠를 중앙에 모으는 내부 래퍼 */
 .inner-wrapper {
     width: 90%;
-    max-width: 1100px;
+    max-width: 1300px;
     margin: 0 auto;
     padding: 0 10px;
 }
@@ -96,7 +96,7 @@ body {
 /* -------------------- 3. 컨텐츠 영역 및 제목 -------------------- */
 .content-area {
     width: 90%;
-    max-width: 1100px;
+    max-width: 1300px;
     margin: 40px auto;
     background-color: #ffffff;
     padding: 30px;
@@ -116,6 +116,7 @@ h1 {
 /* -------------------- 4. 테이블 (리스트) 스타일 -------------------- */
 .data-container {
     margin-top: 20px;
+    overflow-x: auto;
 }
 
 .data-table {
@@ -124,12 +125,16 @@ h1 {
     text-align: left;
     margin-bottom: 20px;
     font-size: 15px;
+    table-layout: fixed;
 }
 
 .data-table th,
 .data-table td {
     padding: 12px 15px;
     border: 1px solid #dee2e6;
+    overflow: hidden; 
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 /* 테이블 헤더 */
@@ -205,7 +210,7 @@ h1 {
     <div class="header-fixed-container">
         <div class="top-bar inner-wrapper">
             <div class="user-info">
-                <span>탈퇴ID관리</span> 
+                <span>${loginEmp.empName}님 반갑습니다.</span>
                 <a href="${pageContext.request.contextPath}/emp/empLogout" class="logout-btn">로그아웃</a>
             </div>
         </div>

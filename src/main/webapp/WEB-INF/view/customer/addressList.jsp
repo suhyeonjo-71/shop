@@ -186,7 +186,10 @@ h1 {
     <div class="header-fixed-container">
         <div class="top-bar inner-wrapper">
             <div class="user-info">
-                <span>배송지 관리</span> 
+                <span>
+                    ${sessionScope.loginCustomer.customerName}님 반갑습니다.
+                    (point : <strong>${sessionScope.loginCustomer.point}</strong>)
+                </span>
                 <a href="${pageContext.request.contextPath}/customer/customerLogout" class="logout-btn">로그아웃</a> 
             </div>
         </div>

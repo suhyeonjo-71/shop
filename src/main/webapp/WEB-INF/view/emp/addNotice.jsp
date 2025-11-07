@@ -141,7 +141,7 @@ textarea:focus { /* textarea 추가 */
 			</tr>
 			<tr>
 				<td>empCode</td>
-				<td><input type="text" name="empCode" id="empCode"></td>
+				<td><input type="text" name="empCode" id="empCode" value="${loginEmp.empCode}" readonly></td>
 			</tr>
 		</table>
 		<button type="button" id="addNoticeBtn">추가</button>

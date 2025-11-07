@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>shop - 공지사항 상세</title>
+<title>shop - 공지 수정</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <style>
@@ -75,7 +75,7 @@ body {
     border-bottom: 2px solid #007bff;
 }
 
-/* 메뉴 링크 스타일 추가 */
+/* 메뉴 링크 스타일 */
 .emp-menu-area .inner-wrapper > div {
     display: flex;
     justify-content: center;
@@ -116,8 +116,8 @@ h1 {
     padding-bottom: 10px;
 }
 
-/* 4. 공지 상세 테이블 스타일 */
-.notice-detail-table {
+/* 4. 수정 폼 테이블 스타일 (notice-detail-table 스타일 활용) */
+.notice-form-table {
     width: 100%;
     border-collapse: collapse;
     text-align: left;
@@ -125,24 +125,30 @@ h1 {
     font-size: 15px;
 }
 
-.notice-detail-table th,
-.notice-detail-table td {
+.notice-form-table td {
     padding: 12px 15px;
     border: 1px solid #dee2e6;
     vertical-align: top;
 }
 
-.notice-detail-table th {
+.notice-form-table tr td:first-child { /* 레이블 컬럼 */
     width: 150px;
     background-color: #f2f2f2;
     text-align: center;
     font-weight: bold;
 }
 
-.notice-content-row td {
-    min-height: 100px;
-    white-space: pre-wrap;
+/* 입력 필드 스타일 */
+.notice-form-table input[type="text"],
+.notice-form-table textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; 
+    resize: vertical; 
 }
+
 
 /* 5. 액션 버튼 스타일 (링크와 버튼 크기 통일) */
 .action-button {
@@ -155,17 +161,15 @@ h1 {
     border-radius: 4px;
     font-weight: bold;
     transition: background-color 0.3s;
-    /* 버튼 크기 통일을 위해 border와 box-sizing 설정 */
     border: none; 
     box-sizing: border-box; 
     cursor: pointer;
-    font-size: 14px; /* 글꼴 크기 통일 */
-    line-height: 1.42857; /* 높이 통일을 위한 라인 높이 설정 */
+    font-size: 14px;
+    line-height: 1.42857; 
 }
 
 /* `<button>` 태그를 위한 추가 설정 */
-.action-button[type="button"] { 
-    /* 버튼의 기본 패딩/마진 재설정 및 display:inline-block 명시 */
+.action-button[type="submit"] { 
     padding: 8px 15px;
     margin-left: 10px;
     display: inline-block;
@@ -175,20 +179,20 @@ h1 {
     background-color: #5a6268;
 }
 
-.list-button {
+.primary-button { /* 수정 완료 버튼에 사용할 파란색 */
     background-color: #007bff;
 }
 
-.list-button:hover {
+.primary-button:hover {
     background-color: #0056b3;
 }
 
-.delete-button {
-    background-color: #dc3545;
+.secondary-button { /* 취소 버튼에 사용할 회색 */
+    background-color: #6c757d;
 }
 
-.delete-button:hover {
-    background-color: #c82333;
+.secondary-button:hover {
+    background-color: #5a6268;
 }
 </style>
 </head>
@@ -210,30 +214,32 @@ h1 {
     </div>
     
     <div class="content-area">
-		<h1>공지사항 상세 내용</h1>
-		
-        <table class="notice-detail-table">
-            <tr>
-                <th>공지 제목</th>
-                <td>${notice.noticeTitle}</td>
-            </tr>
-            <tr class="notice-content-row">
-                <th>공지 내용</th>
-                <td>${notice.noticeContent}</td>
-            </tr>
-            <tr>
-                <th>작성 직원 번호</th>
-                <td>${notice.empCode}</td>
-            </tr>
-        </table>
-        
-        <div style="margin-top: 20px; text-align: right;">
-             <a href="${pageContext.request.contextPath}/emp/noticeList" class="action-button list-button">목록</a>
-             <a href="${pageContext.request.contextPath}/emp/modifyNotice?noticeCode=${notice.noticeCode}" class="action-button">수정</a>
-             <a href="${pageContext.request.contextPath}/emp/removeNotice?noticeCode=${notice.noticeCode}" class="action-button delete-button">삭제</a>
+        <form action="${pageContext.request.contextPath}/emp/modifyNotice" method="post">
+            <h1>공지 수정</h1>
+		    
+		    <table class="notice-form-table">
+			    <tr>
+				    <td>공지 제목</td>
+				    <td>
+					    <input type="text" name="noticeTitle" value="${notice.noticeTitle}" required>
+				    </td>
+			    </tr>
+			    <tr>
+				    <td>공지 내용</td>
+				    <td>
+					    <textarea name="noticeContent" rows="6" cols="50" required>${notice.noticeContent}</textarea>
+				    </td>
+			    </tr>
+		    </table>
 
-        </div>
-        
+		    <input type="hidden" name="noticeCode" value="${notice.noticeCode}">
+
+            <div style="margin-top: 20px; text-align: right;">
+                <a href="${pageContext.request.contextPath}/emp/noticeOne?noticeCode=${notice.noticeCode}" class="action-button secondary-button">취소</a>
+                <button type="submit" class="action-button primary-button">수정 완료</button>
+            </div>
+            
+	    </form>
 	</div>
 </body>
 </html>

@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-//@WebFilter("/emp/*")
+@WebFilter("/emp/*")
 public class EmpFilter extends HttpFilter implements Filter {
 
     public  void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {

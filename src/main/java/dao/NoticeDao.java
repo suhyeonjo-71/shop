@@ -127,18 +127,22 @@ public class NoticeDao {
 		ResultSet rs = null;
 		
 		String sql = """
-					select notice_title noticeTitle, notice_content noticeContent, emp_no empNo
+					select notice_title noticeTitle, notice_content noticeContent, emp_code empCode
 					from notice
 					where notice_code=?
 				""";
 		
-		try {
+		try {  
 			conn = DBConnection.getConn();
 			stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, noticeCode);
 			rs = stmt.executeQuery();
 			while(rs.next()) {
-				
+				resultNotice = new Notice();
+	            resultNotice.setNoticeCode(noticeCode);
+	            resultNotice.setNoticeTitle(rs.getString("noticeTitle"));
+	            resultNotice.setNoticeContent(rs.getString("noticeContent"));
+	            resultNotice.setEmpCode(rs.getInt("empCode"));
 			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -161,11 +165,14 @@ public class NoticeDao {
 		PreparedStatement stmt = null;
 		
 		String sql = """
-					insert into notice(
+					delete from notice where notice_code=?
 				""";
 		
 		try {
-			
+			conn = DBConnection.getConn();
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, n.getNoticeCode());
+			row = stmt.executeUpdate();
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		} finally {
@@ -186,11 +193,16 @@ public class NoticeDao {
 		PreparedStatement stmt = null;
 		
 		String sql = """
-					insert into notice(
+					update notice set notice_title=?, notice_content=? where notice_code=?
 				""";
 		
 		try {
-			
+			conn = DBConnection.getConn();
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, n.getNoticeTitle());
+			stmt.setString(2, n.getNoticeContent());
+			stmt.setInt(3, n.getNoticeCode());
+			row = stmt.executeUpdate();
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		} finally {

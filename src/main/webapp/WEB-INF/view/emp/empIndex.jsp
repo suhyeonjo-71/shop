@@ -9,7 +9,6 @@
 <style>
 /* -------------------- 1. 기본 설정 및 레이아웃 -------------------- */
 body {
-    font-family: 'Malgun Gothic', 'Dotum', sans-serif;
     background-color: #f8f9fa;
     color: #343a40;
     margin: 0;
