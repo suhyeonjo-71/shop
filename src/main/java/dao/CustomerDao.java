@@ -12,6 +12,124 @@ import dto.Outid;
 import dao.DBConnection;
 
 public class CustomerDao {
+	//customer 로그인 시 개인정보열람
+	public Customer selectCustomerCode(int customerCode) {
+		Customer customer = null;
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		String sql = """
+					select 
+						customer_id customerId
+						, customer_pw customerPw
+						, customer_name customerName
+						, customer_phone customerPhone
+					from customer
+					where customer_code =?
+				""";
+		try {
+			conn = DBConnection.getConn();
+	        stmt = conn.prepareStatement(sql);
+	        stmt.setInt(1, customerCode);
+	        rs = stmt.executeQuery();
+	        if(rs.next()) {
+	        	customer = new Customer();
+	        	customer.setCustomerId(rs.getString("customerId"));
+	        	customer.setCustomerPw(rs.getString("customerPw"));
+	        	customer.setCustomerName(rs.getString("customerName"));
+	        	customer.setCustomerPhone(rs.getString("customerPhone"));
+	        }
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null) rs.close();
+	            if (stmt != null) stmt.close();
+	            if (conn != null) conn.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return customer;
+	}
+	
+	//customer 개인정보 수정
+	public int updateCustomer(Customer c) {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		int row = 0;
+		
+		String sql = "update customer set customer_pw=?, customer_phone=? where customer_code=?";
+		
+		
+		try {
+			conn = DBConnection.getConn();
+	        stmt = conn.prepareStatement(sql);
+	        stmt.setString(1, c.getCustomerPw());
+	        stmt.setString(2, c.getCustomerPhone());
+	        stmt.setInt(3, c.getCustomerCode());
+	        row = stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null) stmt.close();
+	            if (conn != null) conn.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return row;
+	}
+	
+	//customer 로그인 시 회원탈퇴(본인)
+	public void deleteCustomer(String customerId) {
+		Connection conn = null;
+		PreparedStatement stmtCustomer = null;
+		PreparedStatement stmtOutid = null;
+
+		String sqlCustomer = """
+					delete from customer where customer_id=?
+				""";
+		String sqlOutid = """
+					insert into outid(id, memo, createdate)
+					values(?,'회원탈퇴',sysdate)
+				""";
+
+		try {
+			conn = DBConnection.getConn();
+			conn.setAutoCommit(false);
+			stmtCustomer = conn.prepareStatement(sqlCustomer);
+			stmtCustomer.setString(1, customerId);
+			int row = stmtCustomer.executeUpdate();
+			if (row == 1) {
+				stmtOutid = conn.prepareStatement(sqlOutid);
+				stmtOutid.setString(1, customerId);
+				stmtOutid.executeUpdate();
+			} else {
+				throw new SQLException();
+			}
+			conn.commit();
+
+		} catch (Exception e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		} finally {
+			try {
+				stmtOutid.close();
+				stmtCustomer.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	//고객 로그인
 	public Customer selectCustomerByLogin(Customer c) throws Exception {
 		Customer loginCustomer = null;
@@ -299,5 +417,3 @@ public class CustomerDao {
 	}
 		
 }
-	
-

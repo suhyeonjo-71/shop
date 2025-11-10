@@ -30,7 +30,7 @@ body {
 /* 컨텐츠를 중앙에 모으는 내부 래퍼 */
 .inner-wrapper {
     width: 90%;
-    max-width: 1100px;
+    max-width: 1300px;
     margin: 0 auto;
     padding: 0 10px;
 }
@@ -48,6 +48,10 @@ body {
     display: flex;
     align-items: center;
     font-size: 14px;
+}
+
+.user-info span strong {
+    color: #007bff;
 }
 
 .logout-btn {
@@ -96,7 +100,7 @@ body {
 /* -------------------- 3. 컨텐츠 영역 및 제목 -------------------- */
 .content-area {
     width: 90%;
-    max-width: 1100px;
+    max-width: 1300px;
     margin: 40px auto;
     background-color: #ffffff;
     padding: 30px;

@@ -29,7 +29,7 @@ public class GoodsListController extends HttpServlet {
 		this.goodsDao = new GoodsDao();
 		List<Goods> goodsList = null;
 		try {
-			goodsList = goodsDao.selectGoodsList(startRow, rowPerPage);
+			goodsList = goodsDao.selectGoodsListByEmp(startRow, rowPerPage);
 			totalRow = goodsDao.selectGoodsCount();
 			lastPage = totalRow / rowPerPage;
 			if(totalRow % rowPerPage != 0) {

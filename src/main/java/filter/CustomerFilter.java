@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 
-@WebFilter("/customer/*")
+//@WebFilter("/customer/*")
 public class CustomerFilter extends HttpFilter implements Filter {
 	
 	@Override
