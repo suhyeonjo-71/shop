@@ -122,8 +122,9 @@ public class CustomerDao {
 			e.printStackTrace();
 		} finally {
 			try {
-				stmtOutid.close();
-				stmtCustomer.close();
+				if (stmtOutid != null) stmtOutid.close();
+	            if (stmtCustomer != null) stmtCustomer.close();
+	            if (conn != null) conn.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
