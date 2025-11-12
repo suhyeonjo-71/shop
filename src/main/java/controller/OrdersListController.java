@@ -17,6 +17,9 @@ public class OrdersListController extends HttpServlet {
 	private OrdersDao ordersDao;
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int currentPage = 1;
+		if(request.getParameter("currentPage") != null) {
+			currentPage = Integer.parseInt(request.getParameter("currentPage"));
+		}
 		int rowPerPage = 10;
 		int startRow = (currentPage - 1) * rowPerPage;
 		
@@ -32,9 +35,11 @@ public class OrdersListController extends HttpServlet {
 		
 		int lastPage = (count % rowPerPage == 0) ? (count/rowPerPage) : (count/rowPerPage)+1;
 		
-		int startPage = ((currentPage-1) /10 * 10) +1;
+		int startPage = ((currentPage-1) / 10 * 10) + 1;
 		int endPage = startPage + 9;
-		if(lastPage < endPage) endPage = lastPage;
+		if(lastPage < endPage) {
+			endPage = lastPage;
+		}
 		
 		request.setAttribute("list", list);
 		request.setAttribute("currentPage", currentPage);
