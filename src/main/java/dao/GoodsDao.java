@@ -13,6 +13,54 @@ import dto.Goods;
 import dto.GoodsImg;
 
 public class GoodsDao {
+	// customer/goodsOne 상품리스트 > 상품상세보기
+	public Map<String, Object> selectGoodsOne(int goodsCode) {
+		Map<String, Object> m = new HashMap<String, Object>();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		String sql = """
+				select 
+					gi.filename filename
+					, g.goods_code goodsCode
+					, g.goods_name goodsName
+					, g.goods_price goodsPrice
+					, nvl(g.soldout, ' ') soldout
+					, g.point_rate pointRate
+				from goods g inner join goods_img gi
+				on g.goods_code = gi.goods_code
+				where g.goods_code=?
+			""";
+		
+		try {
+			conn = DBConnection.getConn();
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, goodsCode);
+			rs = stmt.executeQuery();
+			while(rs.next()) {
+				m.put("filename", rs.getString("filename"));
+				m.put("goodsCode", rs.getInt("goodsCode"));
+				m.put("goodsName", rs.getString("goodsName"));
+				m.put("goodsPrice", rs.getInt("goodsPrice"));
+				m.put("soldout", rs.getString("soldout"));
+				m.put("pointRate", rs.getDouble("pointRate"));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(stmt != null) stmt.close();
+				if(conn != null) conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return m;
+	}
+	
 	// customer 로그인 시 상품 리스트
 	public List<Map<String, Object>> selectBestGoodsList() {
 		List<Map<String, Object>> goodsList = new ArrayList<>();
@@ -45,7 +93,7 @@ public class GoodsDao {
 				m.put("filename", rs.getString("filename"));
 				m.put("goodsCode", rs.getString("goodsCode"));
 				m.put("goodsName", rs.getString("goodsName"));
-				m.put("goodsPrice", rs.getString("goodsPrice"));
+				m.put("goodsPrice", rs.getInt("goodsPrice"));
 				goodsList.add(m);
 			}
 		} catch(Exception e) {

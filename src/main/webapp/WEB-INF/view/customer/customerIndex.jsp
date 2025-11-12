@@ -315,7 +315,9 @@ h1 {
 									    src="${pageContext.request.contextPath}/upload/${m.filename}">
 							    </div>
 							    <div>
-								    ${m.goodsName}<br> ${m.goodsPrice}원
+								    <a href="${pageContext.request.contextPath}/customer/goodsOne?goodsCode=${goodsCode}">
+								    ${m.goodsName}
+								    </a><br> ${m.goodsPrice}원
 							    </div>
                             </a>
 						</td>

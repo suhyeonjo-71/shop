@@ -242,10 +242,22 @@ h1 {
         
         <div style="margin-top: 20px;
             text-align: right;">
-             <a href="${pageContext.request.contextPath}/customer/modifyCustomer?customerId=${customer.customerId}" class="action-button modify-button">수정</a>
-             <a href="${pageContext.request.contextPath}/customer/removeCustomer?customerId=${customer.customerId}" class="action-button remove-button">탈퇴</a>
+             <a href="${pageContext.request.contextPath}/customer/modifyCustomer?customerId=${customer.customerId}" 
+             class="action-button modify-button">수정</a>
+             <a href="${pageContext.request.contextPath}/customer/removeCustomer?customerId=${customer.customerId}" 
+             class="action-button remove-button"">탈퇴</a>
         </div>
         
 	</div>
 </body>
+
+<script>
+	$(function() {
+	    $('.remove-button').on('click', function(e) {
+	        if (!confirm('정말 탈퇴하시겠습니까? 탈퇴 후에는 복구할 수 없습니다.')) {
+	            e.preventDefault(); // 링크 이동 중단
+	        }
+	    });
+	});
+</script>
 </html>

@@ -8,4 +8,8 @@
 	<a href="${pageContext.request.contextPath}/emp/goodsList">[상품관리]</a>
 	<a href="${pageContext.request.contextPath}/emp/ordersList">[주문관리]</a>
 	<a href="${pageContext.request.contextPath}/emp/noticeList">[공지관리]</a>
+	<a href="${pageContext.request.contextPath}/emp/questionList">[주문질문관리]</a>
+	<a href="${pageContext.request.contextPath}/emp/reviewList">[상품리뷰관리]</a>
+	
+	<a href="${pageContext.request.contextPath}/emp/stats">[통계자료]</a>
 </div>

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class OrdersDao {
-	public List<Map<String, Object>> selectOrdersList(int beginRow, int rowPerPage) throws Exception {
+	public List<Map<String, Object>> selectOrdersList(int startRow, int rowPerPage) throws Exception {
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -34,7 +34,7 @@ public class OrdersDao {
 		
 		conn = DBConnection.getConn();
 		stmt = conn.prepareStatement(sql);
-		stmt.setInt(1, beginRow);
+		stmt.setInt(1, startRow);
 		stmt.setInt(2, rowPerPage);
 		rs = stmt.executeQuery();
 		while(rs.next()) {
@@ -55,5 +55,35 @@ public class OrdersDao {
 			list.add(m);
 		}
 		return list;
+	}
+	
+	public int selectOrdersCount() {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		int count = 0;
+		
+		String sql = "select count(*) from orders";
+		
+		try {
+			conn = DBConnection.getConn();
+			stmt = conn.prepareStatement(sql);
+			rs = stmt.executeQuery();
+			if(rs.next()) {
+				count = rs.getInt(1);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(stmt != null) stmt.close();
+				if(conn != null) conn.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		return count;
 	}
 }

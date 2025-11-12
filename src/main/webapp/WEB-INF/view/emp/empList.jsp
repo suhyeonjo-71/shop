@@ -270,13 +270,26 @@ h1 {
             </table>
             
             <div class="pagination">
-                <c:if test="${currentPage > 1}">
-                    <a href="${pageContext.request.contextPath}/emp/empList?currentPage=${currentPage-1}">이전</a>
-                </c:if>
-                <span>${currentPage}</span>
-                <c:if test="${currentPage < lastPage}">
-                    <a href="${pageContext.request.contextPath}/emp/empList?currentPage=${currentPage+1}">다음</a>
-                </c:if>
+                <a href="${pageContext.request.contextPath}/emp/empList?currentPage=1">처음</a>
+                
+                <c:if test="${startPage > 1}">
+					<a href="${pageContext.request.contextPath}/emp/empList?currentPage=${startPage-10}">이전</a>
+				</c:if>
+				
+				<c:forEach var="i" begin="${startPage}" end="${endPage}" step="1">
+					<c:if test="${currentPage == i}">
+						<span>${i}</span>
+					</c:if>
+					<c:if test="${currentPage != i}">
+						<a href="${pageContext.request.contextPath}/emp/empList?currentPage=${i}">${i}</a>
+					</c:if>
+				</c:forEach>
+				
+				<c:if test="${startPage < lastPage}">
+					<a href="${pageContext.request.contextPath}/emp/empList?currentPage=${startPage+10}">다음</a>
+				</c:if>
+                
+                <a href="${pageContext.request.contextPath}/emp/empList?currentPage=${lastPage}">끝</a>
             </div>
         </div>
     </div>

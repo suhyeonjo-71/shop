@@ -252,7 +252,7 @@ h1 {
 			</table>
 			
 			<div class="pagination">
-				<a href="${pageContext.request.contextPath}/emp/noticeList?currentPage=1">처음으로</a>
+				<a href="${pageContext.request.contextPath}/emp/noticeList?currentPage=1">처음</a>
 				
 				<c:if test="${startPage > 1}">
 					<a href="${pageContext.request.contextPath}/emp/noticeList?currentPage=${startPage-10}">이전</a>
@@ -271,7 +271,7 @@ h1 {
 					<a href="${pageContext.request.contextPath}/emp/noticeList?currentPage=${startPage+10}">다음</a>
 				</c:if>
 				
-				<a href="${pageContext.request.contextPath}/emp/noticeList?currentPage=${lastPage}">끝으로</a>
+				<a href="${pageContext.request.contextPath}/emp/noticeList?currentPage=${lastPage}">끝</a>
 			</div>
 		</div>
 	</div>

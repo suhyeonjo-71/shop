@@ -22,28 +22,33 @@ public class EmpListController extends HttpServlet {
 		if(request.getParameter("currentPage") != null) {
 			currentPage = Integer.parseInt(request.getParameter("currentPage"));
 		}
-		
 		int rowPerPage = 10;
 		int startRow = (currentPage - 1) * rowPerPage;
-		int lastPage = 0; int totalRow = 0;
+
 		
 		this.empDao = new EmpDao();
 		List<Emp> empList = null;
+		int totalRow = 0;;
 		try {
 			empList = empDao.selectEmpListByPage(startRow, rowPerPage);
 			totalRow = empDao.selectEmpCount();
-			lastPage = totalRow / rowPerPage;
-			if(totalRow % rowPerPage != 0) {
-				lastPage += 1;
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		int lastPage = (totalRow % rowPerPage == 0) ? (totalRow/rowPerPage) : (totalRow/rowPerPage)+1;
+
+		int startPage = ((currentPage-1) / 10 * 10) + 1;
+		int endPage = startPage + 9;
+		if(lastPage < endPage) endPage = lastPage;
 		
 		//모델 속성
 		request.setAttribute("currentPage", currentPage);
 		request.setAttribute("lastPage", lastPage);
 		request.setAttribute("empList", empList);
+		
+		request.setAttribute("startPage", startPage);
+		request.setAttribute("endPage", endPage);
+		
 		request.getRequestDispatcher("/WEB-INF/view/emp/empList.jsp").forward(request, response);
 	
 	}

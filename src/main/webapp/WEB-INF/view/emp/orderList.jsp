@@ -231,6 +231,29 @@ h1 {
                     </c:forEach>
                 </tbody>
             </table>
+            
+            <div class="pagination">
+            	<a href="${pageContext.request.contextPath}/emp/ordersList?currentPage=1">처음</a>
+            	
+            	<c:if test="${startPage > 1}">
+            		<a href="${pageContext.request.contextPath}/emp/ordersList?currentPage=${currentPage-10}">이전</a>
+            	</c:if>
+            	
+            	<c:forEach var="i" begin="${startPage}" end="${endPage}" step="1">
+					<c:if test="${currentPage == i}">
+						<span>${i}</span>
+					</c:if>
+					<c:if test="${currentPage != i}">
+						<a href="${pageContext.request.contextPath}/emp/ordersList?currentPage=${i}">${i}</a>
+					</c:if>
+				</c:forEach>
+            	
+            	<c:if test="${lastPage != endPage}">
+            		<a href="${pageContext.request.contextPath}/emp/ordersList?currentPage=${currentPage+10}">다음</a>
+            	</c:if>
+            	
+            	<a href="${pageContext.request.contextPath}/emp/ordersList?currentPage=${lastPage}">끝</a>
+            </div>
         </div>
 	</div>
 </body>

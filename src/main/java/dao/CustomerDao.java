@@ -56,25 +56,79 @@ public class CustomerDao {
 	
 	//customer 개인정보 수정
 	public int updateCustomer(Customer c) {
-		Connection conn = null;
-		PreparedStatement stmt = null;
 		int row = 0;
+		Connection conn = null;
+		PreparedStatement stmtUpdate = null;
+		PreparedStatement stmtInsert = null;
+		PreparedStatement stmtCount = null;
+		PreparedStatement stmtDelete = null;
+		ResultSet rs = null;
 		
-		String sql = "update customer set customer_pw=?, customer_phone=? where customer_code=?";
+		String sqlUpdate = "update customer set customer_pw=?, customer_phone=? where customer_code=?";
 		
+		String sqlInset = """
+				insert into pw_history(customer_code, pw, createdate)
+				values(?,?,sysdate)
+			""";
 		
-		try {
+		String sqlCount = "select count(*) from pw_history where customer_code=?";
+		
+		String sqlDelete = """
+				delete from pw_history 
+				where customer_code=?
+				and createdate = (select min(createdate) from pw_history where customer_code=?)
+			""";
+		
+		try { 
 			conn = DBConnection.getConn();
-	        stmt = conn.prepareStatement(sql);
-	        stmt.setString(1, c.getCustomerPw());
-	        stmt.setString(2, c.getCustomerPhone());
-	        stmt.setInt(3, c.getCustomerCode());
-	        row = stmt.executeUpdate();
-		} catch (Exception e) {
+			conn.setAutoCommit(false);
+			
+			// 고객 비밀번호, 전화번호 수정
+			stmtUpdate = conn.prepareStatement(sqlUpdate);
+			stmtUpdate.setString(1, c.getCustomerPw());
+			stmtUpdate.setString(2, c.getCustomerPhone());
+			stmtUpdate.setInt(3, c.getCustomerCode());
+			row = stmtUpdate.executeUpdate();
+			
+			if(row == 1) {
+				// 비밀번호 pw_history에 추가
+				stmtInsert = conn.prepareStatement(sqlInset);
+				stmtInsert.setInt(1, c.getCustomerCode());
+				stmtInsert.setString(2, c.getCustomerPw());
+				stmtInsert.executeUpdate();
+				
+				// 비밀번호 개수
+				stmtCount = conn.prepareStatement(sqlCount);
+				stmtCount.setInt(1, c.getCustomerCode());
+				rs = stmtCount.executeQuery();
+				int count = 0;
+				if(rs.next()) {
+					count = rs.getInt(1);
+				}
+				
+				// 비밀번호가 6개이면 가장 오래된 데이터 삭제
+				if(count > 5) {
+					stmtDelete = conn.prepareStatement(sqlDelete);
+					stmtDelete.setInt(1, c.getCustomerCode());
+					stmtDelete.setInt(2, c.getCustomerCode());
+					stmtDelete.executeUpdate();
+				}
+				conn.commit();
+			}
+		} catch(Exception e) {
 			e.printStackTrace();
+			try {
+				if(conn != null) conn.rollback();
+			} catch(Exception e1) {
+				e1.printStackTrace();
+			}
 		} finally {
 			try {
-				if (stmt != null) stmt.close();
+				if (rs != null) rs.close();
+				if (stmtDelete != null) stmtDelete.close();
+				if (stmtCount != null) stmtCount.close();
+				if (stmtInsert != null) stmtInsert.close();
+	            if (stmtUpdate != null) stmtUpdate.close();
 	            if (conn != null) conn.close();
 			} catch(Exception e) {
 				e.printStackTrace();
