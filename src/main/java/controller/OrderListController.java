@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 
 @WebServlet("/emp/ordersList")
-public class OrdersListController extends HttpServlet {
+public class OrderListController extends HttpServlet {
 	private OrdersDao ordersDao;
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int currentPage = 1;

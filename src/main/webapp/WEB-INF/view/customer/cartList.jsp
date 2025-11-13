@@ -177,7 +177,8 @@ h1 {
 	<div class="header-fixed-container">
         <div class="top-bar inner-wrapper">
             <div class="user-info">
-                <span>${loginCustomer.customerName}님 반갑습니다.</span> <a href="${pageContext.request.contextPath}/emp/empLogout" class="logout-btn">로그아웃</a> </div>
+                <span>${loginCustomer.customerName}님 반갑습니다.
+                </span> <a href="${pageContext.request.contextPath}/emp/empLogout" class="logout-btn">로그아웃</a> </div>
         </div>
         
         <div class="customer-menu-area"> 
@@ -190,7 +191,7 @@ h1 {
 		<h1>장바구니 목록</h1>
 		
 		<div class="data-container">
-			<form>
+			<form method="get" action="${pageContext.request.contextPath}/customer/addOrders">
 				<table class="data-table">
 					<thead>
 						<tr>
@@ -199,7 +200,6 @@ h1 {
 							<th>goodsPrice</th>
 							<th>cartQuantity</th>
 							<th>totalPrice</th>
-							<th>soldout</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -207,20 +207,22 @@ h1 {
 							<tr>
 								<td>
 									<c:if test="${m.soldout == 'soldout'}">
-										&nbsp; </c:if>
+										soldout
+									</c:if>
 									<c:if test="${m.soldout != 'soldout'}">
-										<input type="checkbox" name="ck" value="${m.cartCode}"> </c:if>
+										<input type="checkbox" name="cartCodeList" value="${m.cartCode}"> 
+									</c:if>
 								</td>
 								<td>${m.goodsName}</td>
 								<td>${m.goodsPrice}</td>
 								<td>${m.cartQuantity}</td>
 								<td>${m.totalPrice}</td>
-								<td>${m.soldout}</td>
 							</tr>
 						</c:forEach>
 					</tbody>
 				</table>
-				<button type="button" class="order-button">주문하기</button> </form>
+				<button type="submit" class="order-button">주문하기</button> 
+			</form>
 		</div>
 	</div>
 </body>

@@ -226,7 +226,8 @@ h1 {
                             <td>${m.customerPhone}</td>
                             <td>${m.address}</td>
                             <td>${m.createdate}</td>
-                            <td>${m.orderState}</td>
+                            <td><a href="">${m.orderState}</a></td>
+                            <!-- 구매확정으로 변경시 point_history 포인트 누적 -->
                         </tr>
                     </c:forEach>
                 </tbody>

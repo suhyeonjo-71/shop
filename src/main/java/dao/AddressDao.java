@@ -10,6 +10,7 @@ import java.util.List;
 import dto.Address;
 
 public class AddressDao {
+	
 	//customer 로그인 시 배송지 리스트
 	public List<Address> selectAddressList(int customerCode) throws Exception {
 		List<Address> addressList = new ArrayList<>();

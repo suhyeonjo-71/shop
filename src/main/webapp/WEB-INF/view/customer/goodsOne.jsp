@@ -223,7 +223,7 @@ h1 {
             
             <div class="goods-info-area">
                 
-                <form id="myForm">
+                <form id="myForm" method="get" action="${pageContext.request.contextPath}/customer/addOrders">
                     <input type="hidden" id="contextPath" value="${pageContext.request.contextPath}">
                     <input type="hidden" name="goodsCode" value="${goods.goodsCode}">
                     
@@ -270,7 +270,7 @@ h1 {
 		});
 		
 		$('#orderBtn').click(function() {
-			$('#myForm').attr('method', 'post');
+			$('#myForm').attr('method', 'get');
 			$('#myForm').attr('action', $('#contextPath').val() + "/customer/addOrders");
 			alert('orderBtn: ' + $('#myForm').attr('method') + ',' + $('#myForm').attr('action')); // orders 화면
 			$('#myForm').submit();
